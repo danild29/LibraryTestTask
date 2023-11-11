@@ -4,7 +4,16 @@
     ViewBag.Title = "Loans";
 }
 
-<h2>Loans</h2>
+<div class="alert alert-danger" role="alert">
+
+    <div>
+        <strong id="Er"> </strong>
+        <button type="button" class="close float-end" data-dismiss="alert" aria-label="Close" onclick="hideAllert()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+
 
 
 <div>
@@ -79,7 +88,10 @@
         </dl>
     </div>
 
-    @Html.ActionLink("Return Book", "Return", new { bookId = Model.BookId})
+    <div class="btn btn-warning">
+        @Html.ActionLink("Вернуть книгу", "Return", new { bookId = Model.BookId })
+
+    </div>
 
 }
 else
@@ -88,50 +100,87 @@ else
     {
         @Html.AntiForgeryToken()
 
-<div class="form-horizontal">
-    <div>
-        @Html.HiddenFor(m => m.UserId)
-        @Html.HiddenFor(m => m.BookId)
-    </div>
+        <div class="form-horizontal">
+            <div>
+                @Html.HiddenFor(m => m.UserId)
+                @Html.HiddenFor(m => m.BookId)
+            </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.End, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.End, new { htmlAttributes = new { @class = "datepicker" } })
-            @Html.ValidationMessageFor(model => model.End, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.End, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.End, new { htmlAttributes = new { @class = "datepicker" } })
+                    @Html.ValidationMessageFor(model => model.End, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.SurName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.SurName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SurName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Отдать" class="btn btn-success" />
+                </div>
+            </div>
         </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.SurName, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.SurName, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.SurName, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Save" class="btn btn-default" />
-        </div>
-    </div>
-</div>
     }
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
+<div  class="btn btn-info">
+    @Html.ActionLink("Вернутся к списку", "Index")
 </div>
 
+
+
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+
+
 @section Scripts {
+    <script src="~/Scripts/jquery-ui-1.13.2.min.js"></script>
+
+    <script type="text/javascript">
+        @if (!string.IsNullOrEmpty(ViewBag.Error))
+        {
+            <text>
+                $('#Er').text('@ViewBag.Error');
+            </text>
+        }
+        else
+        {
+            <text>hideAllert();</text>
+        }
+
+        function hideAllert()
+        {
+            $('.alert').hide();
+        }
+        //$(function () {
+        //    $(".datepicker").datepicker({
+        //        dateFormat: "mm.dd.yy",
+        //        changeMonth: true,
+        //        changeYear: true,
+        //        minDate: new Date(2023, 10, 10),
+        //        showOn: "both",
+        //        buttonText: "выбрать"
+        //    });
+        //});
+
+    </script>
+
     @Scripts.Render("~/bundles/jqueryval")
 }

@@ -1,5 +1,4 @@
-﻿using DataLibrary.Data.DataAccess;
-using DataLibrary.Models;
+﻿using DataLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Library.Data.Services
 {
-    public class BookService
+    public class BookService : IBookService
     {
         private readonly ISqlDataAccess _data;
 
@@ -16,7 +15,6 @@ namespace Library.Data.Services
         {
             _data = data;
         }
-
 
 
         public async Task<Book> GetBook(int id)
@@ -58,32 +56,29 @@ namespace Library.Data.Services
 
 
 
-        public async Task LoanBook(string firstName, string surName, int bookId, DateTime start, TimeSpan span, string status = "Issued")
+        public async Task LoanBook(string firstName, string surName, int bookId, DateTime start, DateTime end, string status = "Issued")
         {
-            string sql = @"UPDATE [dbo].[Books] set Available = 0 WHERE Id = @Id";
-            await _data.SaveData(sql, new { Id = bookId, Status = status });
-
-            string sql1 = @"Insert [dbo].[Loans]( BookId, MemberId, LoanDate, ReturnDate, Status) 
+            string insertLoanSql = @"Insert [dbo].[Loans]( BookId, MemberId, LoanDate, ReturnDate, Status) 
                         values(@BookId, (select top 1 Id from [Users] Where FirstName = @FirstName and SurName = @SurName), @LoanDate, @ReturnDate, @Status)";
 
-            var parametrs = new { BookId = bookId, FirstName = firstName, Surname = surName, LoanDate = start, ReturnDate = start + span, Status = status };
-            await _data.SaveData(sql1, parametrs);
+            var parametrs = new { BookId = bookId, FirstName = firstName, Surname = surName, LoanDate = start, ReturnDate = end, Status = status };
+            await _data.SaveData(insertLoanSql, parametrs);
+
+            string updateBookSql = @"UPDATE [dbo].[Books] set Available = 0 WHERE Id = @Id";
+            await _data.SaveData(updateBookSql, new { Id = bookId, Status = status });
         }
 
 
         public async Task ReturnBook(int bookId, DateTime returnedAt, string status = "Returned")
         {
-            string sql = @"UPDATE [Books] set Available = 1 WHERE Id = @Id";
-            await _data.SaveData(sql, new { Id = bookId});
+            string updateLoanSql = @"Update [Loans] set Status=@Status, ReturnDate = @ReturnDate WHERE BookId = @BookId";
+            await _data.SaveData(updateLoanSql, new { BookId = bookId, Status = status, ReturnDate = returnedAt });
 
-            string sql2 = @"Update [Loans] set Status=@Status, ReturnDate = @ReturnDate WHERE BookId = @BookId";
-            await _data.SaveData(sql2, new { BookId = bookId, Status = status, ReturnDate = returnedAt });
+            string updateBookSql = @"UPDATE [Books] set Available = 1 WHERE Id = @Id";
+            await _data.SaveData(updateBookSql, new { Id = bookId });
         }
 
-        
-        
-        
-        
+
         public async Task<Loan> GetLoanByBook(int bookId)
         {
             string sql = sql = @"select l.Id as LoanId, u.Id as UserId, b.Id as BookId, l.LoanDate, l.ReturnDate, l.Status,
@@ -95,8 +90,8 @@ namespace Library.Data.Services
                         Where b.Id = @Id and l.Status != 'Returned'";
 
             var parametrs = new { Id = bookId };
-            
-            var book =  await _data.GetLoan(sql, parametrs, "Email, Name");
+
+            var book = await _data.GetLoan(sql, parametrs, "Email, Name");
             return book.FirstOrDefault();
         }
     }

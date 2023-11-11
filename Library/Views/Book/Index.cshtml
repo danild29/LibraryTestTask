@@ -4,13 +4,14 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-    
+
+
+
+<p class="btn btn-warning">
+    @Html.ActionLink("Добавить книгу", "Create")
 </p>
-<table class="table">
+<table class="table table-dark">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Name)
@@ -39,36 +40,39 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Author)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Publisher)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Year)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Genre)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ISBN)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Available)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", item) | @Html.ActionLink("Loans", "Loans", item )
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Publisher)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ISBN)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Available)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.ActionLink("Изменить", "Edit", item) | @Html.ActionLink("выдача/возрат", "Loans", item)
+            </td>
+        </tr>
+    }
 
 </table>
+
+

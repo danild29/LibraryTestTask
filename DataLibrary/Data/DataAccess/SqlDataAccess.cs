@@ -41,17 +41,8 @@ namespace DataLibrary.Data.DataAccess
         }
 
 
-        public async Task<IEnumerable<Loan>> LoadDataWithFilledList<T, U>(string sql, U parametrs)
+        public async Task<IEnumerable<Loan>> GetLoansWithBook<T, U>(string sql, U parametrs, string split)
         {
-
-            sql = @"SELECT l.Id as LoanId, u.Id as UserId, b.Id as BookId, l.LoanDate, l.ReturnDate, l.Status,
-                           b.[Name], b.Publisher, b.Author
-                        from [Users] as u
-                        left join [Loans] as l on u.Id = l.MemberId
-                        left join [Books] as b on l.BookId = b.Id
-                        Where u.Id  = @Id
-                        ";
-
             using (IDbConnection connection = new SqlConnection(GetConnectionString()))
             {
                 var res = connection.QueryAsync<Loan, Book, Loan>(sql, (loan, book) =>
@@ -60,7 +51,7 @@ namespace DataLibrary.Data.DataAccess
                     return loan;
                 },
                    parametrs, 
-                   splitOn: "Name"
+                   splitOn: split
                 );
 
                 return await res;
@@ -89,16 +80,5 @@ namespace DataLibrary.Data.DataAccess
                 return  res;
             }
         }
-
-
-
     }
-
-}
-public interface ISqlDataAccess
-{
-    Task<IEnumerable<T>> LoadData<T, U>(string sql, U parametrs);
-    Task SaveData<T>(string sql, T parametrs);
-    Task<IEnumerable<Loan>> LoadDataWithFilledList<T, U>(string sql, U parametrs);
-    Task<IEnumerable<Loan>> GetLoan<U>(string sql, U parametrs, string split);
 }

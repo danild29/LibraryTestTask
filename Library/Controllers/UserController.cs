@@ -1,5 +1,6 @@
 ﻿using DataLibrary.Data.Services;
 using DataLibrary.Models;
+using Library.Helpers.Mapping;
 using Library.Models;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,14 +10,13 @@ namespace Library.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserService _service;
+        private readonly IUserService _service;
 
         public UserController()
         {
             _service = ServiceFactory.GetUserService();
         }
 
-        // GET: User
         public async Task<ActionResult> Index()
         {
             var list = await _service.GetUsers();
@@ -33,18 +33,12 @@ namespace Library.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(UserModel user)
+        public async Task<ActionResult> Create(UserModel model)
         {
             if (ModelState.IsValid)
             {
-                User model = new User
-                {
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    SurName = user.SurName,
-                };
-
-                await _service.InsertUser(model);
+                User user = MyCustomMapping.MapUserModelToUser(model);
+                await _service.InsertUser(user);
 
                 return RedirectToAction("Index");
             }
@@ -54,10 +48,8 @@ namespace Library.Controllers
 
         public async Task<ActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            if (id == null) return RedirectToAction("Index");
+
             var user = await _service.GetUser((int)id);
             return View(user);
         }

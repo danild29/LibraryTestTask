@@ -5,12 +5,12 @@ namespace DataLibrary.Data.Services
 {
     public static class ServiceFactory
     {
-        public static UserService GetUserService()
+        public static IUserService GetUserService()
         {
             return new UserService(new SqlDataAccess());
         }
 
-        public static BookService GetBookService()
+        public static IBookService GetBookService()
         {
             return new BookService(new SqlDataAccess());
         }

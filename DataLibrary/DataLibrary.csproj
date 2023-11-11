@@ -45,8 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\DataAccess\ISqlDataAccess.cs" />
     <Compile Include="Data\DataAccess\SqlDataAccess.cs" />
     <Compile Include="Data\Services\BookService.cs" />
+    <Compile Include="Data\Services\IBookService.cs" />
+    <Compile Include="Data\Services\IUserService.cs" />
     <Compile Include="Data\Services\ServiceFactory.cs" />
     <Compile Include="Data\Services\UserService.cs" />
     <Compile Include="Models\Book.cs" />

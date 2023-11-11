@@ -1,12 +1,11 @@
-﻿using DataLibrary.Data.DataAccess;
-using DataLibrary.Models;
+﻿using DataLibrary.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace DataLibrary.Data.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly ISqlDataAccess _data;
 
@@ -31,13 +30,14 @@ namespace DataLibrary.Data.Services
 
         public async Task<User> GetUser(int userId)
         {
-            string sql = @"SELECT *
+            string sql = @"SELECT l.Id as LoanId, u.Id as UserId, b.Id as BookId, l.LoanDate, l.ReturnDate, l.Status,
+                           b.[Name], b.Publisher, b.Author
                         from [Users] as u
-                        left join [Loans] as l on u.Id = l.MemberId
-                        left join [Books] as b on l.BookId = b.Id
-                        Where c.Id  = @Id
-                        ";
-            var res = await _data.LoadDataWithFilledList<Loan, dynamic>(sql, new { Id = userId });
+                        inner join [Loans] as l on u.Id = l.MemberId
+                        inner join [Books] as b on l.BookId = b.Id
+                        Where u.Id  = @Id"
+;
+            var res = await _data.GetLoansWithBook<Loan, dynamic>(sql, new { Id = userId }, "Name");
 
             string sql1 = @"SELECT * from [Users] Where Id = @Id";
             var user = (await _data.LoadData<User, dynamic>(sql1, new { Id = userId })).First();
